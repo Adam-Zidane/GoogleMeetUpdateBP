@@ -1,0 +1,44 @@
+name: Build GoogleMeetUpdateBP
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            bash curl sudo git perl make clang \
+            build-essential fakeroot xz-utils unzip
+
+      - name: Install Theos
+        run: |
+          bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
+          echo "THEOS=$HOME/theos" >> "$GITHUB_ENV"
+
+      - name: Build Debian package
+        run: |
+          make clean package FINALPACKAGE=1
+
+      - name: Verify DEB
+        run: |
+          find packages -name "*.deb"
+          test -n "$(find packages -name '*.deb' -print -quit)"
+
+      - name: Upload DEB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GoogleMeetUpdateBP-deb
+          path: packages/*.deb
+          if-no-files-found: error
