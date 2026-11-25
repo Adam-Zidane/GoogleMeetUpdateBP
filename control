@@ -1,0 +1,9 @@
+Package: com.zidan.googlemeetupdatebp
+Name: GoogleMeetUpdateBP
+Version: 0.0.1
+Architecture: iphoneos-arm64
+Description: Hides the specific Google Meet forced-update screen.
+Maintainer: Zidan
+Author: Zidan
+Section: Tweaks
+Depends: mobilesubstrate
